@@ -11,6 +11,13 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D rb2d;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameManager gameManager;
+	[SerializeField] private AudioClip laserSound;
+	private AudioSource audioSource;
+
+	private void Start()
+{
+    audioSource = GetComponent<AudioSource>();
+}
 
     private void Update()
     {
@@ -32,6 +39,9 @@ public class Player : MonoBehaviour
 
             // Destroy bullet after this much time
             Destroy(bullet, bulletLifetime);
+
+			// Play the laser sound
+    		audioSource.PlayOneShot(laserSound);
         }
     }
 
