@@ -12,11 +12,21 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameManager gameManager;
 	[SerializeField] private AudioClip laserSound;
+	[SerializeField] private AudioClip EngineFX;
+	
 	private AudioSource audioSource;
+	private AudioSource engineAudioSource;
+
+	private bool isThrusting = false;
 
 	private void Start()
 {
     audioSource = GetComponent<AudioSource>();
+
+	engineAudioSource = gameObject.AddComponent<AudioSource>();
+    engineAudioSource.loop = true;
+    engineAudioSource.playOnAwake = false;
+    engineAudioSource.clip = EngineFX;
 }
 
     private void Update()
@@ -62,7 +72,22 @@ public class Player : MonoBehaviour
                 Vector2 thrustForce = transform.up * thrust;
                 rb2d.AddForce(thrustForce);
             }
+			// Start engine sound if not already playing
+    		if (!isThrusting)
+    		{
+        		isThrusting = true;
+    			engineAudioSource.Play();
+    		}
         }
+			else
+			{
+    	    // Stop engine sound when space is released
+    		if (isThrusting)
+    		{
+        		isThrusting = false;
+    			engineAudioSource.Stop();
+    		}
+		}
     }
 
     private void OnTriggerEnter2D(Collider2D collider2D)
