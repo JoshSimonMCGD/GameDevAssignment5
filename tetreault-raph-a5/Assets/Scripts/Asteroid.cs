@@ -8,9 +8,14 @@ public class Asteroid : MonoBehaviour
     public int subdivisionLevel = 0;
     public GameObject[] asteroids;
     public bool RandomizeStartVelocity = true;
+	[SerializeField] private AudioClip destructionSound;
+	private AudioSource audioSource;
 
     void Start()
     {
+
+		audioSource = GetComponent<AudioSource>();
+
         if (RandomizeStartVelocity)
         {
             // Create random point on unit circle
@@ -24,6 +29,20 @@ public class Asteroid : MonoBehaviour
             rb2d.AddForce(force, ForceMode2D.Impulse);
         }
     }
+
+	private void PlayDestructionSound()
+{
+    if (destructionSound == null)
+        return;
+
+    GameObject tempAudio = new GameObject("AsteroidDestructionSound");
+    AudioSource tempSource = tempAudio.AddComponent<AudioSource>();
+    tempSource.clip = destructionSound;
+    tempSource.Play();
+
+    // Destroy the temp object after the clip finishes
+    Destroy(tempAudio, destructionSound.length);
+}
 
     private void OnTriggerEnter2D(Collider2D collider2D)
     {
@@ -57,6 +76,7 @@ public class Asteroid : MonoBehaviour
 
         // Destroy bullet, then this asteroid
         Destroy(collider2D.gameObject);
+		PlayDestructionSound();
         Destroy(this.gameObject);
     }
 
